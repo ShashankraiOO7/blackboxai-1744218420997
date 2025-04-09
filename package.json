@@ -1,0 +1,26 @@
+{
+  "name": "irctc-tatkal-booking-agent",
+  "version": "1.0.0",
+  "description": "AI agent for booking IRCTC Tatkal tickets",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "book": "node booking.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "joi": "^17.9.2",
+    "nodemailer": "^6.9.7",
+    "puppeteer": "^20.8.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "winston": "^3.11.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
