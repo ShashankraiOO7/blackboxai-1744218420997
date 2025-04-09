@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRCTC Tatkal Booking Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Header -->
+            <div class="bg-red-600 text-white p-6">
+                <h1 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-train mr-2"></i>
+                    IRCTC Tatkal Booking Agent
+                </h1>
+                <p class="mt-2 text-red-100">Automated booking for high-demand tickets</p>
+            </div>
+
+            <!-- Status Panel -->
+            <div id="statusPanel" class="hidden bg-blue-50 p-4 mx-6 my-4 rounded-lg border border-blue-200">
+                <div class="flex items-center">
+                    <div id="statusSpinner" class="loading-spinner h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full mr-3"></div>
+                    <div>
+                        <h3 id="statusTitle" class="font-medium text-blue-800">Processing...</h3>
+                        <p id="statusMessage" class="text-sm text-blue-600">Initializing booking process</p>
+                    </div>
+                </div>
+                <div id="progressBar" class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Login Section -->
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-user-lock mr-2"></i>
+                    IRCTC Login
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Details -->
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-route mr-2"></i>
+                    Journey Details
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="fromStation" class="block text-sm font-medium text-gray-700">From Station</label>
+                        <input type="text" id="fromStation" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="toStation" class="block text-sm font-medium text-gray-700">To Station</label>
+                        <input type="text" id="toStation" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="journeyDate" class="block text-sm font-medium text-gray-700">Journey Date</label>
+                        <input type="date" id="journeyDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="trainNumber" class="block text-sm font-medium text-gray-700">Train Number (Optional)</label>
+                        <input type="text" id="trainNumber" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passenger Details -->
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-users mr-2"></i>
+                    Passenger Details
+                </h2>
+                <div id="passengerContainer">
+                    <div class="passenger-entry grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Name</label>
+                            <input type="text" class="passenger-name mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Age</label>
+                            <input type="number" class="passenger-age mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Gender</label>
+                            <select class="passenger-gender mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="T">Transgender</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Berth Preference</label>
+                            <select class="passenger-berth mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                                <option value="LB">Lower</option>
+                                <option value="MB">Middle</option>
+                                <option value="UB">Upper</option>
+                                <option value="SL">Side Lower</option>
+                                <option value="SU">Side Upper</option>
+                                <option value="ANY">Any</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button id="addPassenger" type="button" class="mt-2 inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <i class="fas fa-plus mr-1"></i> Add Passenger
+                </button>
+            </div>
+
+            <!-- Booking Options -->
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-cog mr-2"></i>
+                    Booking Options
+                </h2>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="autoRetry" type="checkbox" class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded" checked>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="autoRetry" class="font-medium text-gray-700">Auto Retry on Failure</label>
+                            <p class="text-gray-500">Automatically retry booking if first attempt fails</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="multiTab" type="checkbox" class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded" checked>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="multiTab" class="font-medium text-gray-700">Multi-tab Booking</label>
+                            <p class="text-gray-500">Use multiple browser tabs to increase success chances</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="premiumTatkal" type="checkbox" class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="premiumTatkal" class="font-medium text-gray-700">Premium Tatkal</label>
+                            <p class="text-gray-500">Attempt premium Tatkal booking if available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="p-6 flex justify-between">
+                <button id="testConnection" type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <i class="fas fa-plug mr-2"></i> Test Connection
+                </button>
+                <button id="startBooking" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <i class="fas fa-rocket mr-2"></i> Start Booking
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                <p class="text-xs text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i> This agent will attempt to book tickets when Tatkal opens at 10:00 AM (AC) or 11:00 AM (Non-AC)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add passenger row
+        document.getElementById('addPassenger').addEventListener('click', function() {
+            const container = document.getElementById('passengerContainer');
+            const newPassenger = document.querySelector('.passenger-entry').cloneNode(true);
+            container.appendChild(newPassenger);
+        });
+
+        // Start booking process
+        document.getElementById('startBooking').addEventListener('click', function() {
+            const statusPanel = document.getElementById('statusPanel');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusMessage = document.getElementById('statusMessage');
+            const progressBar = document.getElementById('progressBar').firstElementChild;
+            
+            statusPanel.classList.remove('hidden');
+            statusTitle.textContent = "Starting Booking Process";
+            statusMessage.textContent = "Preparing to book tickets...";
+            progressBar.style.width = "5%";
+
+            // Simulate progress updates
+            const simulateProgress = () => {
+                let progress = 5;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 5;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        statusTitle.textContent = "Booking Complete!";
+                        statusMessage.textContent = "Tickets successfully booked";
+                        document.getElementById('statusSpinner').classList.add('hidden');
+                    }
+                    progressBar.style.width = `${progress}%`;
+                }, 1000);
+            };
+
+            simulateProgress();
+        });
+    </script>
+</body>
+</html>
